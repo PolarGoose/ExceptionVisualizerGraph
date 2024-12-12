@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <EditionFound Condition="Exists('$(ProgramFiles)\Microsoft Visual Studio\2022\Community')">Community</EditionFound>
+    <EditionFound Condition="'$(EditionFound)' == '' and Exists('$(ProgramFiles)\Microsoft Visual Studio\2022\Professional')">Professional</EditionFound>
+    <EditionFound Condition="'$(EditionFound)' == '' and Exists('$(ProgramFiles)\Microsoft Visual Studio\2022\Enterprise')">Enterprise</EditionFound>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ExceptionGraphVisualizer\ExceptionGraphVisualizer.csproj" />
+
+    <Content Include="$(ProgramFiles)\Microsoft Visual Studio\2022\$(EditionFound)\Common7\IDE\PublicAssemblies\Microsoft.VisualStudio.DebuggerVisualizers.dll" Visible="false">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <Target Name="DownloadGraphviz" BeforeTargets="BeforeBuild" Condition="!Exists('$(BuildFolder)/Graphviz.zip')">
+    <DownloadFile SourceUrl="https://gitlab.com/api/v4/projects/4207231/packages/generic/graphviz-releases/12.2.1/windows_10_cmake_Release_Graphviz-12.2.1-win64.zip" DestinationFolder="$(BuildFolder)" DestinationFileName="Graphviz.zip" />
+    <Unzip SourceFiles="$(BuildFolder)Graphviz.zip" DestinationFolder="$(BuildFolder)" />
+  </Target>
+  <Target Name="CopyGraphvizBinariesToOutputFolder" AfterTargets="DownloadGraphviz" BeforeTargets="BeforeBuild" Condition="!Exists('$(OutputPath)ExceptionGraphVisualizer_GraphViz_Binaries')">
+    <ItemGroup>
+      <GraphVizBinaries Include="$(BuildFolder)/Graphviz-*/bin/*.dll;$(BuildFolder)/Graphviz-*/bin/config6" />
+    </ItemGroup>
+    <MakeDir Directories="$(OutputPath)ExceptionGraphVisualizer_GraphViz_Binaries" />
+    <Copy SourceFiles="@(GraphVizBinaries)" DestinationFolder="$(OutputPath)ExceptionGraphVisualizer_GraphViz_Binaries" />
+  </Target>
+</Project>

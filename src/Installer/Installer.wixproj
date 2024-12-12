@@ -1,0 +1,11 @@
+<Project Sdk="WixToolset.Sdk/5.0.2">
+  <PropertyGroup>
+    <DefineConstants>Version=$(Version)</DefineConstants>
+    <Pedantic>false</Pedantic>
+    <SuppressValidation>true</SuppressValidation>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ExceptionGraphVisualizer\ExceptionGraphVisualizer.csproj" />
+    <ProjectReference Include="..\Test\Test.csproj" />
+  </ItemGroup>
+</Project>

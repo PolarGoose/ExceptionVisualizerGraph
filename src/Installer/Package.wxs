@@ -1,0 +1,121 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="Visual Studio 2022 ExceptionGraphVisualizer Plugin"
+           Manufacturer="PolarGoose"
+           Version="$(var.Version)"
+           Scope="perUser"
+           UpgradeCode="c0529bb7-2990-450d-8288-b2830a237f87">
+    <MajorUpgrade AllowSameVersionUpgrades="yes"
+                  DowngradeErrorMessage="A newer version of [ProductName] is already installed."/>
+    <MediaTemplate EmbedCab="yes"/>
+
+    <Property Id="DEBUGGER_VISUALIZERS_FOLDER_EXISTS">
+      <DirectorySearch Id="SearchForVisualizersDir"
+                       Path="[PersonalFolder]Visual Studio 2022\Visualizers" />
+    </Property>
+
+    <StandardDirectory Id="PersonalFolder">
+      <Directory Id="VS2022Dir" Name="Visual Studio 2022">
+        <Directory Id="VisualizersDir" Name="Visualizers">
+          <Directory Id="GraphVizBinariesDir" Name="ExceptionGraphVisualizer_GraphViz_Binaries"/>
+          <Directory Id="NetStandart20" Name="netstandard2.0"/>
+        </Directory>
+      </Directory>
+    </StandardDirectory>
+
+    <Launch Condition="DEBUGGER_VISUALIZERS_FOLDER_EXISTS" Message="'[PersonalFolder]Visual Studio 2022\Visualizers' does not exist. Visual Studio 2022 needs to be installed." />
+    <Launch Condition="VersionNT64" Message="This installer only works for x64 bit systems" />
+
+    <Feature Id="ProductFeature"
+             Title="Main Product Feature">
+      <ComponentGroupRef Id="MyComponentGroup"/>
+    </Feature>
+
+    <ComponentGroup Id="MyComponentGroup">
+      <Component Id="MyComponent" Directory="VisualizersDir" Guid="{77ECAEAB-846E-4A82-AD39-F01EAB567AC3}">
+        <!-- The debugger side is loaded from the `%UserProfile%\Documents\Visual Studio 2022\Visualizers` folder.
+             We only place here the dependencies needed for our DialogDebuggerVisualizer class -->
+        <File Id="Id1" Source="$(var.ExceptionGraphVisualizer.TargetDir)\ExceptionGraphVisualizer.dll"/>
+        <File Id="Id2" Source="$(var.ExceptionGraphVisualizer.TargetDir)\SharpVectors.Converters.Wpf.dll"/>
+        <File Id="Id3" Source="$(var.ExceptionGraphVisualizer.TargetDir)\SharpVectors.Rendering.Wpf.dll"/>
+        <File Id="Id4" Source="$(var.ExceptionGraphVisualizer.TargetDir)\SharpVectors.Model.dll"/>
+        <File Id="Id5" Source="$(var.ExceptionGraphVisualizer.TargetDir)\SharpVectors.Css.dll"/>
+        <File Id="Id6" Source="$(var.ExceptionGraphVisualizer.TargetDir)\SharpVectors.Dom.dll"/>
+        <File Id="Id7" Source="$(var.ExceptionGraphVisualizer.TargetDir)\SharpVectors.Runtime.Wpf.dll"/>
+        <File Id="Id8" Source="$(var.ExceptionGraphVisualizer.TargetDir)\SharpVectors.Core.dll"/>
+      </Component>
+
+      <Component Id="MyDebuggeeComponent" Directory="NetStandart20" Guid="{615F3C23-ECFD-40A6-9ADB-90535744011D}">
+        <!-- The debuggee side is loaded from the `%UserProfile%\Documents\Visual Studio 2022\Visualizers\netstandard2.0` folder.
+             We only place here the dependencies needed for our VisualizerObjectSource class -->
+        <File Id="Id9" Source="$(var.ExceptionGraphVisualizer.TargetDir)\ExceptionGraphVisualizer.dll"/>
+        <File Id="Id10" Source="$(var.ExceptionGraphVisualizer.TargetDir)\Ben.Demystifier.dll"/>
+      </Component>
+
+      <Component Id="MyGraphVizBinariesComponent" Directory="GraphVizBinariesDir" Guid="{6DE684D4-5261-47E3-B106-A770BDA5D898}">
+        <File Id="ANN_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\ANN.dll"/>
+        <File Id="brotlicommon_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\brotlicommon.dll"/>
+        <File Id="brotlidec_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\brotlidec.dll"/>
+        <File Id="bz2_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\bz2.dll"/>
+        <File Id="cairo_2_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\cairo-2.dll"/>
+        <File Id="cdt_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\cdt.dll"/>
+        <File Id="cgraph_pp_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\cgraph++.dll"/>
+        <File Id="cgraph_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\cgraph.dll"/>
+        <File Id="concrt140_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\concrt140.dll"/>
+        <File Id="config6" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\config6"/>
+        <File Id="ffi_8_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\ffi-8.dll"/>
+        <File Id="fontconfig_1_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\fontconfig-1.dll"/>
+        <File Id="freetype_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\freetype.dll"/>
+        <File Id="fribidi_0_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\fribidi-0.dll"/>
+        <File Id="gdtclft_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\gdtclft.dll"/>
+        <File Id="getopt_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\getopt.dll"/>
+        <File Id="gio_2_0_0_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\gio-2.0-0.dll"/>
+        <File Id="glib_2_0_0_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\glib-2.0-0.dll"/>
+        <File Id="gmodule_2_0_0_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\gmodule-2.0-0.dll"/>
+        <File Id="gobject_2_0_0_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\gobject-2.0-0.dll"/>
+        <File Id="gts_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\gts.dll"/>
+        <File Id="gvc_pp_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\gvc++.dll"/>
+        <File Id="gvc_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\gvc.dll"/>
+        <File Id="gvplugin_core_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\gvplugin_core.dll"/>
+        <File Id="gvplugin_dot_layout_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\gvplugin_dot_layout.dll"/>
+        <File Id="gvplugin_gd_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\gvplugin_gd.dll"/>
+        <File Id="gvplugin_gdiplus_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\gvplugin_gdiplus.dll"/>
+        <File Id="gvplugin_kitty_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\gvplugin_kitty.dll"/>
+        <File Id="gvplugin_neato_layout_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\gvplugin_neato_layout.dll"/>
+        <File Id="gvplugin_pango_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\gvplugin_pango.dll"/>
+        <File Id="gvplugin_vt_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\gvplugin_vt.dll"/>
+        <File Id="gvplugin_webp_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\gvplugin_webp.dll"/>
+        <File Id="harfbuzz_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\harfbuzz.dll"/>
+        <File Id="iconv_2_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\iconv-2.dll"/>
+        <File Id="intl_8_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\intl-8.dll"/>
+        <File Id="jpeg62_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\jpeg62.dll"/>
+        <File Id="libexpat_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\libexpat.dll"/>
+        <File Id="libgd_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\libgd.dll"/>
+        <File Id="liblzma_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\liblzma.dll"/>
+        <File Id="libpng16_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\libpng16.dll"/>
+        <File Id="libsharpyuv_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\libsharpyuv.dll"/>
+        <File Id="libwebp_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\libwebp.dll"/>
+        <File Id="msvcp140_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\msvcp140.dll"/>
+        <File Id="msvcp140_1_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\msvcp140_1.dll"/>
+        <File Id="msvcp140_2_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\msvcp140_2.dll"/>
+        <File Id="msvcp140_atomic_wait_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\msvcp140_atomic_wait.dll"/>
+        <File Id="msvcp140_codecvt_ids_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\msvcp140_codecvt_ids.dll"/>
+        <File Id="pango_1_0_0_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\pango-1.0-0.dll"/>
+        <File Id="pangocairo_1_0_0_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\pangocairo-1.0-0.dll"/>
+        <File Id="pangoft2_1_0_0_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\pangoft2-1.0-0.dll"/>
+        <File Id="pangowin32_1_0_0_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\pangowin32-1.0-0.dll"/>
+        <File Id="pathplan_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\pathplan.dll"/>
+        <File Id="pcre2_8_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\pcre2-8.dll"/>
+        <File Id="pixman_1_0_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\pixman-1-0.dll"/>
+        <File Id="tcl86t_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\tcl86t.dll"/>
+        <File Id="tcldot_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\tcldot.dll"/>
+        <File Id="tcldot_builtin_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\tcldot_builtin.dll"/>
+        <File Id="tclplan_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\tclplan.dll"/>
+        <File Id="tiff_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\tiff.dll"/>
+        <File Id="vcruntime140_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\vcruntime140.dll"/>
+        <File Id="vcruntime140_1_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\vcruntime140_1.dll"/>
+        <File Id="xdot_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\xdot.dll"/>
+        <File Id="zlib1_dll" Source="$(var.Test.TargetDir)\ExceptionGraphVisualizer_GraphViz_Binaries\zlib1.dll"/>
+      </Component>
+    </ComponentGroup>
+  </Package>
+</Wix>
